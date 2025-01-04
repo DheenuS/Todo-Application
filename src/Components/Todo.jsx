@@ -46,12 +46,12 @@ function Todo() {
 
   return (
     <div className="bg-[#222] h-screen p-4">
-      <div className="bg-gray-50 rounded-md flex p-2 gap-2 w-[400px]">
+      <div className="bg-gray-50 rounded-md flex p-2 gap-2 w-[400px] mx-auto mt-14">
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Add new list item"
+          placeholder="Add new task"
           onKeyDown={(e) =>
             e.key === "Enter" && addTodo() // Save when Enter is pressed
           }
@@ -66,16 +66,16 @@ function Todo() {
         </button>
       </div>
 
-      <div className="mt-4 bg-gray-50 px-4 py-2 max-w-[400px] rounded min-h-[400px] max-h-[450px] overflow-y-scroll">
+      <div className="mt-4 bg-gray-50 px-4 py-2 max-w-[400px] rounded min-h-[400px] max-h-[450px] overflow-y-scroll mx-auto">
         <div className="relative">
           {todo.length === 0 ? (
             <p className="sticky text-[16px] text-gray-400 mt-[10em] ml-[5.8em]">
-              ( List is Empty! Add List )
+              ( Task is Empty! Add new Task )
             </p>
           ) : (
             <div className="border-b pb-2 border-gray-300">
               <div className="text-left flex items-center gap-2 bg-gray-500 rounded px-2 py-1.5 w-fit text-gray-50">
-                Total list: <p className="font-medium">{todo.length}</p>
+                Total Task: <p className="font-medium">{todo.length}</p>
               </div>
             </div>
           )}
