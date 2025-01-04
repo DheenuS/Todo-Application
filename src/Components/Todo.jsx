@@ -1,122 +1,152 @@
-import { useState } from 'react';
-import deleteIcon from '../assets/delete-icon.png';
-import saveIcon from '../assets/save-icon.png';
-import addIcon from '../assets/add-icon.png';
+import { useState } from "react";
 
-function App() {
-  const [todos, setTodo] = useState([]);
+const initalLists = ['Hi Dev\'s, Dheen Here'] 
+
+function Todo() {
+  const [todo, setTodo] = useState(initalLists);
   const [inputValue, setInputValue] = useState("");
-
-  const [IndexValue, setIndexValue] = useState("");
-  const [EditValue, setEditValue] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editValue, setEditValue] = useState("");
 
   const addTodo = () => {
     if (inputValue.trim() !== "") {
-      setTodo([...todos, inputValue]);
-      setInputValue("");  
-    }
-    else {
-        alert('Cannot add empty task or list!')
+      setTodo([...todo, inputValue]);
+      setInputValue("");
+    } else {
+      alert("Add task");
     }
   };
 
   const deleteTodo = (index) => {
-    setIndexValue("");
-    const updatedTodos = [...todos];
-    updatedTodos.splice(index, 1);
-    setTodo(updatedTodos);
+    const updatedTodo = todo.filter((_, i) => i !== index);
+    setTodo(updatedTodo);
+    if (editingIndex === index) {
+      setEditingIndex(null);
+      setEditValue("");
+    }
   };
 
-  const handleOnSave = () => {
-    const updatedTodos = [...todos];
-    updatedTodos[IndexValue] = EditValue;
-    setTodo(updatedTodos);
-    setIndexValue("");
+  const handleEdit = (index) => {
+    setEditingIndex(index);
+    setEditValue(todo[index]);
   };
 
-  const handleOnClick = (index) => {
-    setIndexValue(index);
-    /* const updatedTodos = [...todos]; */
-    setEditValue(() => todos[index]);
+  const saveTodo = () => {
+    if (editValue.trim() !== "") {
+      const updatedTodo = todo.map((item, index) =>
+        index === editingIndex ? editValue : item
+      );
+      setTodo(updatedTodo);
+      setEditingIndex(null); // Reset editingIndex after saving
+      setEditValue(""); // Clear editValue after saving
+    } else {
+      alert("Task cannot be empty!");
+    }
   };
 
   return (
-    <div className='h-screen w-screen bg-[#222] flex flex-col justify-center items-center overflow-y-hidden overflow-x-hidden'>
-      <div className=' w-[22rem] md:w-[35rem] h-auto bg-white border rounded-md'>
-        {/* <h1 className='flex justify-center items-center text-[24px] font-bold text-gray-500'>Todo Application</h1> */}
-        <div className='h-[4rem] flex items-center justify-between px-4 space-x-4'>
-          <input
-            type="text"
-            placeholder='Add your list...'
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className='px-2 w-full h-[38px] border border-gray-200 rounded-md focus:border-gray-400 focus:rounded-md focus:outline-none'
-          />
-          <button
-            className='flex items-center justify-center space-x-1 px-5 py-1.5 bg-blue-500 hover:bg-blue-600 rounded-md text-white font-medium active:scale-95'
-            onClick={addTodo}
-          >
-            <img src={addIcon} alt="add" className='h-[22px] pt-0.5'/>
-            <p className='pr-0.5'>Add</p>
-          </button>
-        </div>
-        <div className="max-h-[28rem] overflow-y-scroll bg-white">
-  {todos.map((item, index) => (
-    <div
-      className="h-[60px] w-full flex justify-center items-center px-4 md:px-4"
-      key={index}
-    >
-      <div className="border-t w-full h-[60px] flex justify-between items-center space-x-2">
-        {IndexValue === index ? (
-          <div className="flex items-center w-full space-x-2">
-            {/* Editable Input */}
-            <input
-              type="text"
-              value={EditValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="h-[38px] flex-grow border focus:border-gray-400 focus:rounded-md focus:outline-none rounded-md px-2 overflow-hidden text-ellipsis whitespace-nowrap"
-            />
-            {/* Save Icon */}
-            <img
-              src={saveIcon}
-              alt="save"
-              className="p-2 h-[36px] bg-green-100 hover:bg-green-200 rounded-md text-white font-normal lg:font-medium active:scale-95 cursor-pointer"
-              onClick={handleOnSave}
-            />
-            {/* Delete Icon */}
-            <img
-              src={deleteIcon}
-              alt="delete"
-              className="p-2 h-[36px] bg-red-100 hover:bg-red-200 rounded-md text-white font-normal lg:font-medium active:scale-95 cursor-pointer"
-              onClick={() => deleteTodo(index)}
-            />
-          </div>
-        ) : (
-          <div className="flex items-center w-full space-x-2">
-            {/* Non-Editable Text */}
-            <h1
-              className="h-[40px] flex-grow flex items-center px-2 cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap"
-              onClick={() => handleOnClick(index)}
-            >
-              {item}
-            </h1>
-            {/* Delete Icon */}
-            <img
-              src={deleteIcon}
-              alt="delete"
-              className="p-2 h-[36px] bg-red-100 hover:bg-red-200 rounded-md text-white font-normal lg:font-medium active:scale-95 cursor-pointer"
-              onClick={() => deleteTodo(index)}
-            />
-          </div>
-        )}
+    <div className="bg-[#222] h-screen p-4">
+      <div className="bg-gray-50 rounded-md flex p-2 gap-2 w-[400px]">
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Add new list item"
+          onKeyDown={(e) =>
+            e.key === "Enter" && addTodo() // Save when Enter is pressed
+          }
+          className="border border-gray-400 rounded w-full px-2 focus:outline-none focus:border-gray-600"
+          autoFocus
+        />
+        <button
+          onClick={addTodo}
+          className="bg-blue-500 px-2 py-1.5 rounded text-white text-nowrap"
+        >
+          Add Item
+        </button>
       </div>
-    </div>
-  ))}
-</div>
 
+      <div className="mt-4 bg-gray-50 px-4 py-2 max-w-[400px] rounded min-h-[400px] max-h-[450px] overflow-y-scroll">
+        <div className="relative">
+          {todo.length === 0 ? (
+            <p className="sticky text-[16px] text-gray-400 mt-[10em] ml-[5.8em]">
+              ( List is Empty! Add List )
+            </p>
+          ) : (
+            <div className="border-b pb-2 border-gray-300">
+              <div className="text-left flex items-center gap-2 bg-gray-500 rounded px-2 py-1.5 w-fit text-gray-50">
+                Total list: <p className="font-medium">{todo.length}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {todo.map((item, index) => (
+          <div key={index} className="border-b border-gray-300 py-2">
+            {editingIndex === index ? (
+              <div className="bg-gray-100 flex justify-between gap-2">
+                <div className="inline-flex items-center gap-1">
+                  {/* <p>{index + 1})</p> */}
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    // onBlur={saveTodo} // Save when focus is lost
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && saveTodo() // Save when Enter is pressed
+                    }
+                    autoFocus
+                    className="border border-gray-400 rounded p-1.5 w-full focus:outline-none focus:border-gray-600"
+                  />
+                </div>
+                <div className="inline-flex gap-2">
+                  <button
+                    onClick={saveTodo}
+                    className="bg-[#008916] px-4 py-1.5 rounded text-white"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => deleteTodo(index)}
+                    className="bg-[#DC143C] px-4 py-1.5 rounded text-white"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex space-x-2">
+                  {/* <p>{index + 1})</p> */}
+                  <p
+                    onClick={() => handleEdit(index)}
+                    className="font-normal cursor-pointer"
+                  >
+                    {item}
+                  </p>
+                </div>
+
+                <div className="inline-flex gap-2">
+                  <button
+                    onClick={() => handleEdit(index)}
+                    className="bg-[#008916] px-4 py-1.5 rounded text-white"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteTodo(index)}
+                    className="bg-[#DC143C] px-4 py-1.5 rounded text-white"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-export default App;
+export default Todo;
